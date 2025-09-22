@@ -1,30 +1,28 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 import { Loader2, Building2 } from "lucide-react"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
   const { login, isLoading } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
+  // No limpiar error, usaremos toast
 
     try {
       await login({ email, password })
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error de autenticación")
+      toast.error(err instanceof Error ? err.message : "Error de autenticación")
     }
   }
 
@@ -64,11 +62,7 @@ export function LoginForm() {
                 disabled={isLoading}
               />
             </div>
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+            {/* Los errores ahora se muestran con toast (sonner) */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
