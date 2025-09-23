@@ -349,11 +349,12 @@ export function RolesTable({ data: initialData }: { readonly data: Role[] }) {
     </>
   )
 }
+
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/drawer"
 
 import { RoleForm } from "./role-form"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Save, Pencil, Trash } from "lucide-react"
+import { Loader2, Save} from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
