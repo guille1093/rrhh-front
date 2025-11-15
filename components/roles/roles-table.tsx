@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   closestCenter,
   DndContext,
@@ -11,15 +11,15 @@ import {
   useSensors,
   type DragEndEvent,
   type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -29,7 +29,7 @@ import {
   IconGripVertical,
   IconLayoutColumns,
   IconPlus,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -44,23 +44,23 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table"
-  import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -68,16 +68,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import type { Role } from "@/types/roles"
+} from "@/components/ui/table";
+import type { Role } from "@/types/roles";
 function DragHandle({ id }: { readonly id: number }) {
-  const { attributes, listeners } = useSortable({ id })
+  const { attributes, listeners } = useSortable({ id });
   return (
-    <Button {...attributes} {...listeners} variant="ghost" size="icon" className="text-muted-foreground size-7 hover:bg-transparent">
+    <Button
+      {...attributes}
+      {...listeners}
+      variant="ghost"
+      size="icon"
+      className="text-muted-foreground size-7 hover:bg-transparent"
+    >
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  )
+  );
 }
 
 // Table columns definition
@@ -92,7 +98,10 @@ const columns: ColumnDef<Role>[] = [
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -120,20 +129,25 @@ const columns: ColumnDef<Role>[] = [
     accessorKey: "description",
     header: "Descripción",
     cell: ({ row }) => (
-      <span className="max-w-xs truncate block">{row.original.description}</span>
+      <span className="max-w-xs truncate block">
+        {row.original.description}
+      </span>
     ),
   },
   {
     accessorKey: "permissions",
     header: "Permisos",
     cell: ({ row }) => (
-      <Badge variant="outline">{row.original.permissions.length} permisos</Badge>
+      <Badge variant="outline">
+        {row.original.permissions.length} permisos
+      </Badge>
     ),
   },
-
-]
+];
 function DraggableRow({ row }: { readonly row: Row<Role> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({ id: row.original.id })
+  const { transform, transition, setNodeRef, isDragging } = useSortable({
+    id: row.original.id,
+  });
   return (
     <TableRow
       data-state={row.getIsSelected() && "selected"}
@@ -143,33 +157,50 @@ function DraggableRow({ row }: { readonly row: Row<Role> }) {
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+        <TableCell key={cell.id}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
       ))}
     </TableRow>
-  )
+  );
 }
 export function RolesTable({ data: initialData }: { readonly data: Role[] }) {
-  const [data, setData] = React.useState(() => initialData)
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 })
-  const [createDrawerOpen, setCreateDrawerOpen] = React.useState(false)
-  const [createLoading, setCreateLoading] = React.useState(false)
-  const createFormRef = React.useRef<HTMLFormElement | null>(null)
-  const sortableId = React.useId()
+  const [data, setData] = React.useState(() => initialData);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [createDrawerOpen, setCreateDrawerOpen] = React.useState(false);
+  const [createLoading, setCreateLoading] = React.useState(false);
+  const createFormRef = React.useRef<HTMLFormElement | null>(null);
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  )
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data])
+    useSensor(KeyboardSensor, {}),
+  );
+  const dataIds = React.useMemo<UniqueIdentifier[]>(
+    () => data?.map(({ id }) => id) || [],
+    [data],
+  );
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -183,38 +214,40 @@ export function RolesTable({ data: initialData }: { readonly data: Role[] }) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+    const { active, over } = event;
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
     }
   }
 
   // Handler para submit externo del drawer de creación
   const handleCreateSubmit = () => {
     if (createFormRef.current) {
-      createFormRef.current.requestSubmit()
+      createFormRef.current.requestSubmit();
     }
-  }
+  };
 
   // Handler para guardar el nuevo rol
   const handleCreateSave = (newRole: Role) => {
-    setData((prev) => [newRole, ...prev])
-    setCreateDrawerOpen(false)
-  }
+    setData((prev) => [newRole, ...prev]);
+    setCreateDrawerOpen(false);
+  };
 
   return (
     <>
       <div className="flex items-center justify-between">
         <section>
           <h1 className="text-3xl font-bold">Gestión de Roles</h1>
-                <p className="text-muted-foreground">Administra los roles y permisos del sistema</p>
+          <p className="text-muted-foreground">
+            Administra los roles y permisos del sistema
+          </p>
         </section>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -227,16 +260,25 @@ export function RolesTable({ data: initialData }: { readonly data: Role[] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              {table.getAllColumns().filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide()).map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
+              {table
+                .getAllColumns()
+                .filter(
+                  (column) =>
+                    typeof column.accessorFn !== "undefined" &&
+                    column.getCanHide(),
+                )
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <Button size="sm" onClick={() => setCreateDrawerOpen(true)}>
@@ -246,158 +288,224 @@ export function RolesTable({ data: initialData }: { readonly data: Role[] }) {
         </div>
       </div>
 
-        <div className="overflow-hidden rounded-lg border">
-          <DndContext collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd} sensors={sensors} id={sortableId}>
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
-                    ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">No results.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
-        </div>
-        <div className="flex items-center justify-between px-4">
-          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} seleccionados.
-          </div>
-          <div className="flex w-full items-center gap-8 lg:w-fit">
-            <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="text-sm font-medium">Filas por página</Label>
-              <Select value={`${table.getState().pagination.pageSize}`} onValueChange={(value) => table.setPageSize(Number(value))}>
-                <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue placeholder={table.getState().pagination.pageSize} />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>{pageSize}</SelectItem>
+      <div className="overflow-hidden rounded-lg border">
+        <DndContext
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis]}
+          onDragEnd={handleDragEnd}
+          sensors={sensors}
+          id={sortableId}
+        >
+          <Table>
+            <TableHeader className="bg-muted sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
-            </div>
-            <div className="ml-auto flex items-center gap-2 lg:ml-0">
-              <Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-                <span className="sr-only">Primera página</span>
-                <IconChevronsLeft />
-              </Button>
-              <Button variant="outline" className="size-8" size="icon" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                <span className="sr-only">Anterior</span>
-                <IconChevronLeft />
-              </Button>
-              <Button variant="outline" className="size-8" size="icon" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                <span className="sr-only">Siguiente</span>
-                <IconChevronRight />
-              </Button>
-              <Button variant="outline" className="hidden size-8 lg:flex" size="icon" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-                <span className="sr-only">Última página</span>
-                <IconChevronsRight />
-              </Button>
-            </div>
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              {table.getRowModel().rows?.length ? (
+                <SortableContext
+                  items={dataIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {table.getRowModel().rows.map((row) => (
+                    <DraggableRow key={row.id} row={row} />
+                  ))}
+                </SortableContext>
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </DndContext>
+      </div>
+      <div className="flex items-center justify-between px-4">
+        <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} seleccionados.
+        </div>
+        <div className="flex w-full items-center gap-8 lg:w-fit">
+          <div className="hidden items-center gap-2 lg:flex">
+            <Label htmlFor="rows-per-page" className="text-sm font-medium">
+              Filas por página
+            </Label>
+            <Select
+              value={`${table.getState().pagination.pageSize}`}
+              onValueChange={(value) => table.setPageSize(Number(value))}
+            >
+              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                <SelectValue
+                  placeholder={table.getState().pagination.pageSize}
+                />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex w-fit items-center justify-center text-sm font-medium">
+            Página {table.getState().pagination.pageIndex + 1} de{" "}
+            {table.getPageCount()}
+          </div>
+          <div className="ml-auto flex items-center gap-2 lg:ml-0">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Primera página</span>
+              <IconChevronsLeft />
+            </Button>
+            <Button
+              variant="outline"
+              className="size-8"
+              size="icon"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Anterior</span>
+              <IconChevronLeft />
+            </Button>
+            <Button
+              variant="outline"
+              className="size-8"
+              size="icon"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Siguiente</span>
+              <IconChevronRight />
+            </Button>
+            <Button
+              variant="outline"
+              className="hidden size-8 lg:flex"
+              size="icon"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Última página</span>
+              <IconChevronsRight />
+            </Button>
           </div>
         </div>
+      </div>
 
-
-
-    {/* Drawer para crear nuevo rol */}
-    <Drawer open={createDrawerOpen} onOpenChange={setCreateDrawerOpen} direction="right">
-      <DrawerContent className="max-w-lg w-full">
-        <DrawerHeader>
-          <DrawerTitle>Crear Nuevo Rol</DrawerTitle>
-          <DrawerDescription>Define el nombre, descripción y permisos del nuevo rol.</DrawerDescription>
-        </DrawerHeader>
-        <div className="overflow-y-auto px-4 pb-4">
-          <RoleForm
-            onSave={handleCreateSave}
-            onCancel={() => setCreateDrawerOpen(false)}
-            formRef={createFormRef as React.RefObject<HTMLFormElement>}
-            loading={createLoading}
-            setLoading={setCreateLoading}
-          />
-        </div>
-        <DrawerFooter>
-          <Button onClick={handleCreateSubmit} disabled={createLoading}>
-            {createLoading ? "Guardando..." : "Crear Rol"}
-          </Button>
-          <DrawerClose asChild>
-            <Button variant="secondary">Cerrar</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+      {/* Drawer para crear nuevo rol */}
+      <Drawer
+        open={createDrawerOpen}
+        onOpenChange={setCreateDrawerOpen}
+        direction="right"
+      >
+        <DrawerContent className="max-w-lg w-full">
+          <DrawerHeader>
+            <DrawerTitle>Crear Nuevo Rol</DrawerTitle>
+            <DrawerDescription>
+              Define el nombre, descripción y permisos del nuevo rol.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="overflow-y-auto px-4 pb-4">
+            <RoleForm
+              onSave={handleCreateSave}
+              onCancel={() => setCreateDrawerOpen(false)}
+              formRef={createFormRef as React.RefObject<HTMLFormElement>}
+              loading={createLoading}
+              setLoading={setCreateLoading}
+            />
+          </div>
+          <DrawerFooter>
+            <Button onClick={handleCreateSubmit} disabled={createLoading}>
+              {createLoading ? "Guardando..." : "Crear Rol"}
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="secondary">Cerrar</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
-  )
+  );
 }
 
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/drawer"
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+} from "@/components/ui/drawer";
 
-import { RoleForm } from "./role-form"
-import { Badge } from "@/components/ui/badge"
-import { Loader2, Save} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { RoleForm } from "./role-form";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Save } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function TableCellViewer({ item }: { readonly item: Role }) {
-  const [open, setOpen] = React.useState(false)
-  const [editMode, setEditMode] = React.useState(false)
-  const [role, setRole] = React.useState<Role>(item)
-  const [loading, setLoading] = React.useState(false)
-  const formRef = React.useRef<HTMLFormElement | null>(null)
+  const [open, setOpen] = React.useState(false);
+  const [editMode, setEditMode] = React.useState(false);
+  const [role, setRole] = React.useState<Role>(item);
+  const [loading, setLoading] = React.useState(false);
+  const formRef = React.useRef<HTMLFormElement | null>(null);
 
   // Para actualizar el rol tras editar
   const handleSave = (updatedRole: Role) => {
-    setRole(updatedRole)
-    setEditMode(false)
-  }
+    setRole(updatedRole);
+    setEditMode(false);
+  };
 
   // Agrupar permisos por categoría (igual que en RoleDetailsModal)
   const groupPermissionsByCategory = (permissions: Role["permissions"]) => {
-    const groups: { [key: string]: Role["permissions"] } = {}
+    const groups: { [key: string]: Role["permissions"] } = {};
     permissions.forEach((permission) => {
-      const category = permission.permission.split(":")[1] || "otros"
+      const category = permission.permission.split(":")[1] || "otros";
       if (!groups[category]) {
-        groups[category] = []
+        groups[category] = [];
       }
-      groups[category].push(permission)
-    })
-    return groups
-  }
-  const groupedPermissions = groupPermissionsByCategory(role.permissions)
+      groups[category].push(permission);
+    });
+    return groups;
+  };
+  const groupedPermissions = groupPermissionsByCategory(role.permissions);
 
   // Handler para submit externo
   const handleExternalSubmit = () => {
     if (formRef.current) {
-      formRef.current.requestSubmit()
+      formRef.current.requestSubmit();
     }
-  }
+  };
 
   // Eliminar rol (simulado, deberías conectar con tu API)
   const handleDelete = () => {
     // Aquí deberías llamar a tu API para eliminar el rol
     // Por ahora solo cerramos el drawer
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   return (
     <Drawer open={open} onOpenChange={setOpen} direction="right">
@@ -410,7 +518,11 @@ function TableCellViewer({ item }: { readonly item: Role }) {
         <DrawerHeader>
           <DrawerTitle>
             {editMode ? "Editar Rol" : "Detalles del Rol"}
-            {!editMode && <Badge variant="secondary" className="ml-2">{role.role}</Badge>}
+            {!editMode && (
+              <Badge variant="secondary" className="ml-2">
+                {role.role}
+              </Badge>
+            )}
           </DrawerTitle>
           <DrawerDescription>
             {editMode
@@ -433,7 +545,9 @@ function TableCellViewer({ item }: { readonly item: Role }) {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Información General</CardTitle>
+                    <CardTitle className="text-lg">
+                      Información General
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
@@ -450,39 +564,49 @@ function TableCellViewer({ item }: { readonly item: Role }) {
                     </div>
                     <div>
                       <span className="font-medium">Total de Permisos:</span>
-                      <Badge variant="outline" className="ml-2">{role.permissions.length}</Badge>
+                      <Badge variant="outline" className="ml-2">
+                        {role.permissions.length}
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Permisos Asignados</CardTitle>
+                    <CardTitle className="text-lg">
+                      Permisos Asignados
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => (
-                        <div key={category} className="space-y-2">
-                          <h4 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">
-                            {category.replace("-", " ")}
-                          </h4>
-                          <div className="grid grid-cols-1 gap-2">
-                            {categoryPermissions.map((permission) => (
-                              <div
-                                key={permission.id}
-                                className="flex items-center justify-between p-3 rounded-lg border bg-muted/20"
-                              >
-                                <div>
-                                  <div className="font-medium text-sm">{permission.permission}</div>
-                                  <div className="text-xs text-muted-foreground">{permission.description}</div>
+                      {Object.entries(groupedPermissions).map(
+                        ([category, categoryPermissions]) => (
+                          <div key={category} className="space-y-2">
+                            <h4 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">
+                              {category.replace("-", " ")}
+                            </h4>
+                            <div className="grid grid-cols-1 gap-2">
+                              {categoryPermissions.map((permission) => (
+                                <div
+                                  key={permission.id}
+                                  className="flex items-center justify-between p-3 rounded-lg border bg-muted/20"
+                                >
+                                  <div>
+                                    <div className="font-medium text-sm">
+                                      {permission.permission}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {permission.description}
+                                    </div>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    ID: {permission.id}
+                                  </Badge>
                                 </div>
-                                <Badge variant="outline" className="text-xs">
-                                  ID: {permission.id}
-                                </Badge>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ),
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -508,7 +632,7 @@ function TableCellViewer({ item }: { readonly item: Role }) {
               <Button variant="default" onClick={() => setEditMode(true)}>
                 Editar
               </Button>
-              <Button variant="destructive" onClick={handleDelete}>
+              <Button variant="ghost" onClick={handleDelete}>
                 Eliminar
               </Button>
             </>
@@ -519,5 +643,5 @@ function TableCellViewer({ item }: { readonly item: Role }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
