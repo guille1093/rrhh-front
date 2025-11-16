@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import {
   CheckCircle2,
@@ -26,33 +27,32 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <p className="text-sm">F</p>
-                <Zap className="h-3 w-3 text-primary-foreground" />
-                <p className="text-sm">H</p>
-              </div>
-              <span className="text-xl font-bold">FlowHR</span>
+              <p className="text-4xl text-teal-500 font-bold tracking-tight text-balance">
+                <strong className="text-purple-600">「</strong>
+                <strong className="text-teal-500">」</strong>
+                FLOW
+                <strong className="text-purple-600">HR</strong>
+              </p>
             </div>
             <nav className="hidden md:flex items-center gap-6">
               <Link
                 href="#features"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Features
+                Características
               </Link>
               <Link
                 href="#pricing"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Pricing
+                Precios
               </Link>
               <Link
                 href="/login"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Log in
+                <Button size="sm">Iniciar sesión</Button>
               </Link>
-              <Button size="sm">Get Started</Button>
             </nav>
           </div>
         </div>
@@ -62,48 +62,53 @@ export default function LandingPage() {
       <section className="py-20 lg:py-32">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
-            <Badge variant="secondary" className="mb-6">
-              New: AI-powered task suggestions
-            </Badge>
             <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 text-balance">
-              Manage projects with clarity and speed
+              Sistema de Gestión de Personal y Nóminas
             </h1>
+
+            <div className="flex flex-row items-center justify-center">
+              <Image
+                src="/cvrecruit.png"
+                width={250}
+                height={250}
+                alt="Picture of the author"
+              />
+              <Image
+                src="/cvok.png"
+                width={600}
+                height={250}
+                alt="Picture of the author"
+              />
+              <Image
+                src="/interview.png"
+                width={600}
+                height={250}
+                alt="Picture of the author"
+              />
+              <Image
+                src="/cvcontractok.png"
+                width={600}
+                height={250}
+                alt="Picture of the author"
+              />
+            </div>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty leading-relaxed">
-              TaskFlow helps teams stay organized, collaborate seamlessly, and
-              deliver projects on time. Simple, powerful, and built for modern
-              teams.
+              FlowHR centraliza y simplifica la gestión de recursos humanos de
+              tu empresa. Administra empleados, estructura organizacional y
+              solicitudes de forma eficiente.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-base">
-                Start Free Trial
+                Comenzar
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="text-base bg-transparent"
               >
-                Watch Demo
+                Ver Demo
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground mt-6">
-              No credit card required • 14-day free trial
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-12 border-y border-border bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8">
-          <p className="text-center text-sm text-muted-foreground mb-8">
-            Trusted by teams at leading companies
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-12 opacity-60">
-            <div className="text-2xl font-bold">Acme Corp</div>
-            <div className="text-2xl font-bold">TechStart</div>
-            <div className="text-2xl font-bold">Innovate Inc</div>
-            <div className="text-2xl font-bold">BuildCo</div>
-            <div className="text-2xl font-bold">DesignHub</div>
           </div>
         </div>
       </section>
@@ -113,23 +118,25 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-balance">
-              Everything you need to succeed
+              Funcionalidades Principales
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Powerful features designed to help your team work smarter, not
-              harder.
+              Herramientas poderosas diseñadas para optimizar la gestión de tu
+              equipo y organización.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
             <Card className="border-2">
               <CardHeader>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                  <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <Users className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Task Management</CardTitle>
+                <CardTitle className="text-2xl">
+                  Gestión Organizacional
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  Create, assign, and track tasks with ease. Set priorities,
-                  deadlines, and dependencies to keep everyone aligned.
+                  Define y visualiza la estructura de tu empresa, incluyendo
+                  áreas, departamentos y puestos de trabajo.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -137,12 +144,14 @@ export default function LandingPage() {
             <Card className="border-2">
               <CardHeader>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                  <Users className="h-6 w-6 text-primary" />
+                  <CheckCircle2 className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Team Collaboration</CardTitle>
+                <CardTitle className="text-2xl">
+                  Administración de Empleados
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  Real-time updates, comments, and file sharing. Keep your
-                  entire team in sync with seamless communication tools.
+                  Centraliza la información de tus empleados, desde datos
+                  personales y contractuales hasta evaluaciones de desempeño.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -152,10 +161,12 @@ export default function LandingPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
                   <BarChart3 className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Progress Tracking</CardTitle>
+                <CardTitle className="text-2xl">
+                  Reportes y Analíticas
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  Visualize project progress with intuitive dashboards. Get
-                  insights and analytics to make data-driven decisions.
+                  Obtén métricas clave sobre la dotación de personal, tipos de
+                  contrato y distribución de empleados en la organización.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -168,44 +179,44 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-balance">
-              Simple, transparent pricing
+              Precios simples y transparentes
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Choose the plan that's right for your team. All plans include a
-              14-day free trial.
+              Elige el plan adecuado para tu equipo. Todos los planes incluyen
+              una prueba gratuita de 14 días.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
             {/* Starter Plan */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">Starter</CardTitle>
+                <CardTitle className="text-2xl">Básico</CardTitle>
                 <CardDescription className="text-base">
-                  Perfect for small teams
+                  Perfecto para equipos pequeños
                 </CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">$12</span>
-                  <span className="text-muted-foreground">/user/month</span>
+                  <span className="text-muted-foreground">/usuario/mes</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <Button className="w-full mb-6">Start Free Trial</Button>
+                <Button className="w-full mb-6">Comenzar Prueba</Button>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Up to 10 team members</span>
+                    <span className="text-sm">Hasta 10 miembros de equipo</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited projects</span>
+                    <span className="text-sm">Proyectos ilimitados</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Basic reporting</span>
+                    <span className="text-sm">Reportes básicos</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Email support</span>
+                    <span className="text-sm">Soporte por email</span>
                   </li>
                 </ul>
               </CardContent>
@@ -214,42 +225,44 @@ export default function LandingPage() {
             {/* Professional Plan */}
             <Card className="border-primary border-2 relative">
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                Most Popular
+                Más Popular
               </Badge>
               <CardHeader>
-                <CardTitle className="text-2xl">Professional</CardTitle>
+                <CardTitle className="text-2xl">Profesional</CardTitle>
                 <CardDescription className="text-base">
-                  For growing teams
+                  Para equipos en crecimiento
                 </CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">$24</span>
-                  <span className="text-muted-foreground">/user/month</span>
+                  <span className="text-muted-foreground">/usuario/mes</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <Button className="w-full mb-6">Start Free Trial</Button>
+                <Button className="w-full mb-6">Comenzar Prueba</Button>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Up to 50 team members</span>
+                    <span className="text-sm">Hasta 50 miembros de equipo</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited projects</span>
+                    <span className="text-sm">Proyectos ilimitados</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <span className="text-sm">
-                      Advanced reporting & analytics
+                      Reportes y analíticas avanzadas
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Priority support</span>
+                    <span className="text-sm">Soporte prioritario</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Custom integrations</span>
+                    <span className="text-sm">
+                      Integraciones personalizadas
+                    </span>
                   </li>
                 </ul>
               </CardContent>
@@ -258,12 +271,12 @@ export default function LandingPage() {
             {/* Enterprise Plan */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
+                <CardTitle className="text-2xl">Empresa</CardTitle>
                 <CardDescription className="text-base">
-                  For large organizations
+                  Para grandes organizaciones
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">Custom</span>
+                  <span className="text-4xl font-bold">Personalizado</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -271,30 +284,32 @@ export default function LandingPage() {
                   variant="outline"
                   className="w-full mb-6 bg-transparent"
                 >
-                  Contact Sales
+                  Contactar a Ventas
                 </Button>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited team members</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Unlimited projects</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <span className="text-sm">
-                      Advanced security & compliance
+                      Miembros de equipo ilimitados
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Dedicated account manager</span>
+                    <span className="text-sm">Proyectos ilimitados</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Custom SLA</span>
+                    <span className="text-sm">
+                      Seguridad y cumplimiento avanzados
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">Gestor de cuenta dedicado</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm">SLA personalizado</span>
                   </li>
                 </ul>
               </CardContent>
@@ -308,27 +323,27 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                  <p className="text-sm">F</p>
-                  <Zap className="h-3 w-3 text-primary-foreground" />
-                  <p className="text-sm">H</p>
-                </div>
-                <span className="text-xl font-bold">FlowHR</span>
+              <div className="flex items-center gap-2">
+                <p className="text-5xl text-teal-500 font-bold tracking-tight text-balance">
+                  <strong className="text-purple-600">「</strong>
+                  <strong className="text-teal-500">」</strong>
+                  FLOW
+                  <strong className="text-purple-600">HR</strong>
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Modern project management for teams that move fast.
+              <p className="text-sm mt-4 text-muted-foreground leading-relaxed">
+                Gestión de personal moderna para equipos que se mueven rápido.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
+              <h3 className="font-semibold mb-4">Producto</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Features
+                    Funcionalidades
                   </Link>
                 </li>
                 <li>
@@ -336,7 +351,7 @@ export default function LandingPage() {
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Pricing
+                    Precios
                   </Link>
                 </li>
                 <li>
@@ -344,7 +359,7 @@ export default function LandingPage() {
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Security
+                    Seguridad
                   </Link>
                 </li>
                 <li>
@@ -352,20 +367,20 @@ export default function LandingPage() {
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Roadmap
+                    Hoja de Ruta
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
+              <h3 className="font-semibold mb-4">Empresa</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    About
+                    Nosotros
                   </Link>
                 </li>
                 <li>
@@ -381,7 +396,7 @@ export default function LandingPage() {
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Careers
+                    Carreras
                   </Link>
                 </li>
                 <li>
@@ -389,13 +404,13 @@ export default function LandingPage() {
                     href="#"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Contact
+                    Contacto
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Connect</h3>
+              <h3 className="font-semibold mb-4">Conecta</h3>
               <div className="flex gap-4">
                 <Link
                   href="#"
@@ -420,20 +435,20 @@ export default function LandingPage() {
           </div>
           <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © 2025 TaskFlow. All rights reserved.
+              © 2025 FlowHR. Todos los derechos reservados.
             </p>
             <div className="flex gap-6">
               <Link
                 href="#"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Privacy Policy
+                Política de Privacidad
               </Link>
               <Link
                 href="#"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Terms of Service
+                Términos de Servicio
               </Link>
             </div>
           </div>

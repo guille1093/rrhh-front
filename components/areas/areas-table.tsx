@@ -162,7 +162,7 @@ function TableCellViewer({
                     <div>
                       <span className="font-medium">Empresa:</span>
                       <Badge variant="outline" className="ml-2">
-                        ID: {area.company.id}
+                        ID: {area.company?.id}
                       </Badge>
                     </div>
                     {area.createdAt && (
@@ -258,7 +258,7 @@ const columns = (
     accessorKey: "companyId",
     header: "Empresa",
     cell: ({ row }) => (
-      <Badge variant="default">{row.original.company.name}</Badge>
+      <Badge variant="default">{row.original.company?.name}</Badge>
     ),
   },
 ];

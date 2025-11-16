@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,29 +16,36 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function NavMain({
   items,
 }: {
   readonly items: readonly {
-    readonly title: string
-    readonly url: string
-    readonly icon?: LucideIcon
-    readonly isActive?: boolean
+    readonly title: string;
+    readonly url: string;
+    readonly icon?: LucideIcon;
+    readonly isActive?: boolean;
     readonly items?: readonly {
-      readonly title: string
-      readonly url: string
-      readonly icon?: LucideIcon
-      readonly permissions?: string[]
-    }[]
-  }[]
+      readonly title: string;
+      readonly url: string;
+      readonly icon?: LucideIcon;
+      readonly permissions?: string[];
+    }[];
+  }[];
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>RRHH2025</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <p className="text-2xl text-teal-500 font-bold tracking-tight text-balance mb-4">
+          <strong className="text-purple-600">「</strong>
+          <strong className="text-teal-500">」</strong>
+          FLOW
+          <strong className="text-purple-600">HR</strong>
+        </p>
+      </SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {items.map((item) =>
           item.items && item.items.length > 0 ? (
             <Collapsible
               key={item.title}
@@ -60,7 +67,9 @@ export function NavMain({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
-                            {subItem.icon && <subItem.icon style={{marginRight: 8}} />}
+                            {subItem.icon && (
+                              <subItem.icon style={{ marginRight: 8 }} />
+                            )}
                             <span>{subItem.title}</span>
                           </a>
                         </SidebarMenuSubButton>
@@ -72,16 +81,20 @@ export function NavMain({
             </Collapsible>
           ) : (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                isActive={item.isActive}
+              >
                 <a href={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          )
-        ))}
+          ),
+        )}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
