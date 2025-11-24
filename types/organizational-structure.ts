@@ -97,6 +97,10 @@ export interface Department {
   area: {
     id: number;
     name: string;
+    company: {
+      id: number;
+      name: string;
+    };
   };
   createdAt?: string;
 }
@@ -135,6 +139,14 @@ export interface Position {
   department: {
     id: number;
     name: string;
+    area: {
+      id: number;
+      name: string;
+      company: {
+        id: number;
+        name: string;
+      };
+    };
   };
   createdAt?: string;
 }
