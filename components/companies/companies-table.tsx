@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -9,7 +9,7 @@ import {
   IconChevronsRight,
   IconLayoutColumns,
   IconPlus,
-} from "@tabler/icons-react";
+} from "@tabler/icons-react"
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -23,211 +23,47 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-} from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@tanstack/react-table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerClose,
-} from "@/components/ui/drawer";
-import { CompanyForm } from "./company-form";
-import OrganizationalChart from "./organizational-chart";
-import type { Company } from "@/types/organizational-structure";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CompaniesAPI } from "@/lib/companies-api";
-import { toast } from "sonner";
-import Link from "next/link";
-import { Loader2 } from "lucide-react";
+} from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Link from "next/link"
+import { Loader2 } from "lucide-react"
+import { CompaniesAPI } from "@/lib/companies-api"
+import { toast } from "sonner"
+import type { Company } from "@/types/organizational-structure"
 
 function TableCellViewer({
   item,
-  onUpdate,
-  onDelete,
 }: {
-  readonly item: Company;
-  onUpdate: (company: Company) => void;
-  onDelete: (id: number) => void;
+  readonly item: Company
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [editMode, setEditMode] = React.useState(false);
-  const [company, setCompany] = React.useState<Company>(item);
-  const [loading, setLoading] = React.useState(false);
-  const formRef = React.useRef<HTMLFormElement | null>(null);
-
-  const handleSave = (updatedCompany: Company) => {
-    setCompany(updatedCompany);
-    onUpdate(updatedCompany);
-    setEditMode(false);
-  };
-
-  const handleExternalSubmit = () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("¿Estás seguro de eliminar esta empresa?")) return;
-
-    try {
-      await CompaniesAPI.deleteCompany(company.id);
-      toast.success("Empresa eliminada exitosamente");
-      onDelete(company.id);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error deleting company:", error);
-      toast.error("Error al eliminar empresa");
-    }
-  };
-
   return (
-    <Drawer open={open} onOpenChange={setOpen} direction="right">
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {company.name}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="max-w-2xl w-full">
-        <DrawerHeader>
-          <DrawerTitle>
-            {editMode ? "Editar Empresa" : "Detalles de la Empresa"}
-          </DrawerTitle>
-          <DrawerDescription>
-            {editMode
-              ? "Modifica la información de la empresa."
-              : "Consulta la información de esta empresa."}
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="overflow-y-auto px-4 pb-4">
-          {editMode ? (
-            <CompanyForm
-              company={company}
-              onSave={handleSave}
-              onCancel={() => setEditMode(false)}
-              formRef={formRef as React.RefObject<HTMLFormElement>}
-              loading={loading}
-              setLoading={setLoading}
-            />
-          ) : (
-            <ScrollArea className="max-h-[60vh]">
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      Información General
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <span className="font-medium">ID:</span>
-                      <span className="ml-2">{company.id}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Nombre:</span>
-                      <span className="ml-2">{company.name}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Email:</span>
-                      <span className="ml-2">{company.email}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Teléfono:</span>
-                      <span className="ml-2">{company.phone}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Industria:</span>
-                      <span className="ml-2">{company.industry}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Dirección:</span>
-                      <span className="ml-2">{company.address}</span>
-                    </div>
-                    {company.createdAt && (
-                      <div>
-                        <span className="font-medium">Fecha de Creación:</span>
-                        <span className="ml-2">
-                          {new Date(company.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            </ScrollArea>
-          )}
-        </div>
-        <DrawerFooter>
-          {editMode ? (
-            <Button onClick={handleExternalSubmit} disabled={loading}>
-              {loading ? "Guardando..." : "Actualizar Empresa"}
-            </Button>
-          ) : (
-            <>
-              <Link
-                href={`/dashboard/companies/${company.id}/organizational-chart`}
-              >
-                <Button variant="default">Ver Organigrama</Button>
-              </Link>
-              <Button variant="default" onClick={() => setEditMode(true)}>
-                Editar
-              </Button>
-              <Button variant="ghost" onClick={handleDelete}>
-                Eliminar
-              </Button>
-            </>
-          )}
-          <DrawerClose asChild>
-            <Button variant="secondary">Cerrar</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
+    <Link
+      href={`/dashboard/companies/${item.id}/organizational-chart`}
+      className="font-medium text-primary hover:underline"
+    >
+      {item.name}
+    </Link>
+  )
 }
 
-const columns = (
-  onUpdate: (company: Company) => void,
-  onDelete: (id: number) => void,
-): ColumnDef<Company>[] => [
+const columns = (onUpdate: (company: Company) => void, onDelete: (id: number) => void): ColumnDef<Company>[] => [
   {
     id: "select",
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -248,13 +84,7 @@ const columns = (
   {
     accessorKey: "name",
     header: "Nombre",
-    cell: ({ row }) => (
-      <TableCellViewer
-        item={row.original}
-        onUpdate={onUpdate}
-        onDelete={onDelete}
-      />
-    ),
+    cell: ({ row }) => <TableCellViewer item={row.original} />,
     enableHiding: false,
   },
   {
@@ -275,11 +105,43 @@ const columns = (
   {
     accessorKey: "address",
     header: "Dirección",
-    cell: ({ row }) => (
-      <span className="max-w-xs truncate block">{row.original.address}</span>
-    ),
+    cell: ({ row }) => <span className="max-w-xs truncate block">{row.original.address}</span>,
   },
-];
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const company = row.original
+      return (
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/companies/${company.id}/edit`}>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <span className="sr-only">Editar</span>
+              <IconLayoutColumns className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-destructive"
+            onClick={async () => {
+              if (!confirm("¿Estás seguro de eliminar esta empresa?")) return
+              try {
+                await CompaniesAPI.deleteCompany(company.id)
+                toast.success("Empresa eliminada exitosamente")
+                onDelete(company.id)
+              } catch (error) {
+                toast.error("Error al eliminar empresa")
+              }
+            }}
+          >
+            <span className="sr-only">Eliminar</span>
+            <IconPlus className="h-4 w-4 rotate-45" />
+          </Button>
+        </div>
+      )
+    },
+  },
+]
 
 export function CompaniesTable({
   data: initialData,
@@ -292,52 +154,31 @@ export function CompaniesTable({
   searchTerm,
   setSearchTermAction,
 }: {
-  readonly data: Company[];
-  pageCount: number;
-  pagination: { pageIndex: number; pageSize: number };
-  setPaginationAction: React.Dispatch<
-    React.SetStateAction<{ pageIndex: number; pageSize: number }>
-  >;
-  sorting: SortingState;
-  setSortingAction: React.Dispatch<React.SetStateAction<SortingState>>;
-  loading: boolean;
-  searchTerm: string;
-  setSearchTermAction: (term: string) => void;
+  readonly data: Company[]
+  pageCount: number
+  pagination: { pageIndex: number; pageSize: number }
+  setPaginationAction: React.Dispatch<React.SetStateAction<{ pageIndex: number; pageSize: number }>>
+  sorting: SortingState
+  setSortingAction: React.Dispatch<React.SetStateAction<SortingState>>
+  loading: boolean
+  searchTerm: string
+  setSearchTermAction: (term: string) => void
 }) {
-  const [data, setData] = React.useState(() => initialData);
+  const [data, setData] = React.useState(() => initialData)
   React.useEffect(() => {
-    setData(initialData);
-  }, [initialData]);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [createDrawerOpen, setCreateDrawerOpen] = React.useState(false);
-  const [createLoading, setCreateLoading] = React.useState(false);
-  const createFormRef = React.useRef<HTMLFormElement | null>(null);
+    setData(initialData)
+  }, [initialData])
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
 
   const handleUpdate = (updatedCompany: Company) => {
-    setData((prev) =>
-      prev.map((c) => (c.id === updatedCompany.id ? updatedCompany : c)),
-    );
-  };
+    setData((prev) => prev.map((c) => (c.id === updatedCompany.id ? updatedCompany : c)))
+  }
 
   const handleDelete = (id: number) => {
-    setData((prev) => prev.filter((c) => c.id !== id));
-  };
-
-  const handleCreateSave = (newCompany: Company) => {
-    setData((prev) => [newCompany, ...prev]);
-    setCreateDrawerOpen(false);
-  };
-
-  const handleCreateSubmit = () => {
-    if (createFormRef.current) {
-      createFormRef.current.requestSubmit();
-    }
-  };
+    setData((prev) => prev.filter((c) => c.id !== id))
+  }
 
   const table = useReactTable({
     data,
@@ -365,13 +206,11 @@ export function CompaniesTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
+  })
 
   return (
     <>
       <div className="flex items-center justify-end gap-2">
-        {/*button link to create new*/}
-
         <Input
           placeholder="Buscar por nombre..."
           value={searchTerm}
@@ -389,11 +228,7 @@ export function CompaniesTable({
           <DropdownMenuContent align="end" className="w-56">
             {table
               .getAllColumns()
-              .filter(
-                (column) =>
-                  typeof column.accessorFn !== "undefined" &&
-                  column.getCanHide(),
-              )
+              .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
               .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
@@ -421,12 +256,7 @@ export function CompaniesTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -435,35 +265,21 @@ export function CompaniesTable({
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   <Loader2 className="mx-auto h-8 w-8 animate-spin" />
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No hay empresas registradas.
                 </TableCell>
               </TableRow>
@@ -474,8 +290,7 @@ export function CompaniesTable({
 
       <div className="flex items-center justify-between px-4">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} seleccionados.
+          {table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} seleccionados.
         </div>
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">
@@ -487,9 +302,7 @@ export function CompaniesTable({
               onValueChange={(value) => table.setPageSize(Number(value))}
             >
               <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
+                <SelectValue placeholder={table.getState().pagination.pageSize} />
               </SelectTrigger>
               <SelectContent side="top">
                 {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -501,8 +314,7 @@ export function CompaniesTable({
             </Select>
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Página {table.getState().pagination.pageIndex + 1} de{" "}
-            {table.getPageCount()}
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
@@ -547,38 +359,6 @@ export function CompaniesTable({
           </div>
         </div>
       </div>
-
-      <Drawer
-        open={createDrawerOpen}
-        onOpenChange={setCreateDrawerOpen}
-        direction="right"
-      >
-        <DrawerContent className="max-w-lg w-full">
-          <DrawerHeader>
-            <DrawerTitle>Crear Nueva Empresa</DrawerTitle>
-            <DrawerDescription>
-              Ingresa la información de la nueva empresa.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="overflow-y-auto px-4 pb-4">
-            <CompanyForm
-              onSave={handleCreateSave}
-              onCancel={() => setCreateDrawerOpen(false)}
-              formRef={createFormRef as React.RefObject<HTMLFormElement>}
-              loading={createLoading}
-              setLoading={setCreateLoading}
-            />
-          </div>
-          <DrawerFooter>
-            <Button onClick={handleCreateSubmit} disabled={createLoading}>
-              {createLoading ? "Guardando..." : "Crear Empresa"}
-            </Button>
-            <DrawerClose asChild>
-              <Button variant="secondary">Cerrar</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
     </>
-  );
+  )
 }

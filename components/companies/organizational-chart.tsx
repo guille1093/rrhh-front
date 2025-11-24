@@ -1,116 +1,90 @@
-"use client";
-
-import { useState, useCallback, useEffect } from "react";
-import {
-  ReactFlow,
-  applyNodeChanges,
-  applyEdgeChanges,
-  addEdge,
-  Node,
-  Edge,
-  NodeChange,
-  EdgeChange,
-  Connection,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { Company } from "@/types/organizational-structure";
+import type { Company } from "@/types/organizational-structure"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Users, Building, Briefcase } from "lucide-react"
 
 interface OrganizationalChartProps {
-  company: Company;
+  company: Company
 }
 
-const OrganizationalChart = ({ company }: OrganizationalChartProps) => {
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
-
-  useEffect(() => {
-    if (company) {
-      const newNodes: Node[] = [];
-      const newEdges: Edge[] = [];
-      const nodeWidth = 150;
-      const horizontalSpacing = 50;
-      const verticalSpacing = 100;
-
-      const layout = (node: any, x: number, y: number): number => {
-        const children =
-          node.departments ||
-          (node.areas ? node.areas : []) ||
-          node.positions ||
-          [];
-        const subtreeWidth = children.reduce(
-          (acc: number, child: any) =>
-            acc + layout(child, x, y + verticalSpacing),
-          0,
-        );
-
-        const nodeX =
-          x + (subtreeWidth > 0 ? subtreeWidth / 2 - nodeWidth / 2 : 0);
-
-        newNodes.push({
-          id: `${node.id}`,
-          position: { x: nodeX, y },
-          data: { label: node.name },
-          type: node.id === company.id ? "input" : "default",
-        });
-
-        let childX = x;
-        children.forEach((child: any) => {
-          const childSubtreeWidth = layout(child, childX, y + verticalSpacing);
-          const childNode = newNodes.find((n) => n.id === `${child.id}`);
-          if (childNode) {
-            newEdges.push({
-              id: `edge-${node.id}-${child.id}`,
-              source: `${node.id}`,
-              target: `${child.id}`,
-              animated: true,
-            });
-          }
-          childX += childSubtreeWidth;
-        });
-
-        return Math.max(subtreeWidth, nodeWidth + horizontalSpacing);
-      };
-
-      layout(company, 0, 0);
-
-      setNodes(newNodes);
-      setEdges(newEdges);
-    }
-  }, [company]);
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-
-    [],
-  );
-
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-
-    [],
-  );
-
-  const onConnect = useCallback(
-    (params: Edge | Connection) =>
-      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-
-    [],
-  );
-
+export default function OrganizationalChart({ company }: OrganizationalChartProps) {
   return (
-    <div style={{ width: "100%", height: "800px" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-      />
-    </div>
-  );
-};
+    <div className="space-y-6">
+      <Card className="border-2 border-primary/20">
+        <CardHeader className="bg-muted/50 pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building className="h-5 w-5 text-primary" />
+              <CardTitle className="text-xl">{company.name}</CardTitle>
+            </div>
+            <Badge variant="secondary" className="text-sm">
+              <Users className="mr-1 h-3 w-3" />
+              {company.areas?.reduce((acc, area) => acc + (area.employeeCount || 0), 0) || 0} empleados
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid gap-6">
+            {company.areas?.map((area) => (
+              <div
+                key={area.id}
+                className="relative pl-6 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-border"
+              >
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="relative z-10 -ml-[29px] flex h-6 w-6 items-center justify-center rounded-full border bg-background">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold">{area.name}</h3>
+                  <Badge variant="outline" className="text-xs">
+                    {area.employeeCount || 0} emp.
+                  </Badge>
+                </div>
 
-export default OrganizationalChart;
+                <div className="grid gap-4 pl-4 md:grid-cols-2 lg:grid-cols-3">
+                  {area.departments?.map((dept) => (
+                    <Card key={dept.id} className="overflow-hidden">
+                      <div className="bg-muted/30 p-3 border-b flex justify-between items-center">
+                        <span className="font-medium">{dept.name}</span>
+                        <Badge variant="secondary" className="text-[10px] h-5">
+                          {dept.employeeCount || 0}
+                        </Badge>
+                      </div>
+                      <div className="p-3">
+                        {dept.positions && dept.positions.length > 0 ? (
+                          <ul className="space-y-2">
+                            {dept.positions.map((pos) => (
+                              <li
+                                key={pos.id}
+                                className="flex items-center justify-between text-sm text-muted-foreground bg-muted/10 p-2 rounded-md"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Briefcase className="h-3 w-3" />
+                                  <span>{pos.name}</span>
+                                </div>
+                                <span className="text-xs font-medium">{pos.employeeCount || 0}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-xs text-muted-foreground italic">Sin puestos definidos</p>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                  {(!area.departments || area.departments.length === 0) && (
+                    <p className="text-sm text-muted-foreground italic col-span-full">
+                      No hay departamentos registrados
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+            {(!company.areas || company.areas.length === 0) && (
+              <p className="text-center text-muted-foreground py-8">No hay áreas registradas en esta empresa</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

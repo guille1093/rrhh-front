@@ -6,8 +6,8 @@ import { AuthProvider } from "@/contexts/auth-context";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { IBM_Plex_Sans } from "next/font/google";
-const ibmPlexSans = IBM_Plex_Sans({ weight: "300", subsets: ["latin"] });
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+const ibmPlexSans = IBM_Plex_Mono({ weight: "300", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Sistema RRHH",
