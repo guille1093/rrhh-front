@@ -18,6 +18,7 @@ export interface Company {
       positions: {
         id: number;
         name: string;
+        employees: [] | null;
         employeeCount?: number;
       }[];
     }[];
