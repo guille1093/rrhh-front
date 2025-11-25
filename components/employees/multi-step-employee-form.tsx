@@ -1,26 +1,42 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createEmployee, updateEmployee, getEmployee } from "@/lib/employees-api"
-import { getCompanies } from "@/lib/companies-api"
-import type { EmployeeCreateRequest } from "@/types/employee"
-import type { Company } from "@/types/organizational-structure"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  createEmployee,
+  updateEmployee,
+  getEmployee,
+} from "@/lib/employees-api";
+import { toast } from "sonner";
+import { getCompanies } from "@/lib/companies-api";
+import type { EmployeeCreateRequest } from "@/types/employee";
+import type { Company } from "@/types/organizational-structure";
+import countries from "./countries.json";
+import provinciasData from "./provincias.json";
+import departamentosData from "./departamentos.json";
 
 interface MultiStepEmployeeFormProps {
-  employeeId?: number
+  employeeId?: number;
 }
 
-export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps) {
-  const router = useRouter()
-  const [step, setStep] = useState(employeeId ? 2 : 1)
-  const [loading, setLoading] = useState(false)
-  const [companies, setCompanies] = useState<Company[]>([])
+export function MultiStepEmployeeForm({
+  employeeId,
+}: MultiStepEmployeeFormProps) {
+  const router = useRouter();
+  const [step, setStep] = useState(employeeId ? 2 : 1);
+  const [loading, setLoading] = useState(false);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   // Form data
   const [formData, setFormData] = useState<EmployeeCreateRequest>({
@@ -32,7 +48,7 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
     documentNumber: "",
     cuil: "",
     birthDate: "",
-    nationality: "",
+    nationality: "Argentina",
     gender: "",
     civilStatus: "",
     phone: "",
@@ -43,34 +59,55 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
     addressPostalCode: "",
     addressCity: "",
     addressProvince: "",
-  })
+  });
 
-  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null)
-  const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null)
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null)
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
+    null,
+  );
+  const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<
+    number | null
+  >(null);
+
+  // Provincias y ciudades (departamentos)
+  const provincias = provinciasData.provincias || [];
+  const departamentos = departamentosData.departamentos || [];
+
+  // Obtener la provincia seleccionada
+  const selectedProvincia = provincias.find(
+    (prov: any) => prov.nombre === formData.addressProvince,
+  );
+
+  // Filtrar departamentos por provincia seleccionada
+  const departamentosFiltrados = selectedProvincia
+    ? departamentos.filter(
+        (dep: any) =>
+          dep.provincia && dep.provincia.nombre === selectedProvincia.nombre,
+      )
+    : [];
 
   useEffect(() => {
-    loadCompanies()
+    loadCompanies();
     if (employeeId) {
-      loadEmployee()
+      loadEmployee();
     }
-  }, [employeeId])
+  }, [employeeId]);
 
   const loadCompanies = async () => {
     try {
-      const response = await getCompanies({ pageSize: 100 })
-      setCompanies(response.data.results)
+      const response = await getCompanies({ pageSize: 100 });
+      setCompanies(response.data.results);
     } catch (error) {
-      console.error("[v0] Failed to load companies:", error)
+      console.error("[v0] Failed to load companies:", error);
     }
-  }
+  };
 
   const loadEmployee = async () => {
-    if (!employeeId) return
+    if (!employeeId) return;
     try {
-      setLoading(true)
-      const response = await getEmployee(employeeId)
-      const employee = response.data
+      setLoading(true);
+      const response = await getEmployee(employeeId);
+      const employee = response.data;
 
       setFormData({
         firstName: employee.firstName,
@@ -92,46 +129,57 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
         addressPostalCode: employee.addressPostalCode || "",
         addressCity: employee.addressCity || "",
         addressProvince: employee.addressProvince || "",
-      })
+      });
 
       // Set hierarchy selection
-      setSelectedCompanyId(employee.position.department.area.company.id)
-      setSelectedAreaId(employee.position.department.area.id)
-      setSelectedDepartmentId(employee.position.department.id)
+      setSelectedCompanyId(employee.position.department.area.company.id);
+      setSelectedAreaId(employee.position.department.area.id);
+      setSelectedDepartmentId(employee.position.department.id);
     } catch (error) {
-      console.error("[v0] Failed to load employee:", error)
+      console.error("[v0] Failed to load employee:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       if (employeeId) {
-        await updateEmployee(employeeId, formData)
+        await updateEmployee(employeeId, formData);
+        toast.success("Empleado actualizado correctamente");
       } else {
-        await createEmployee(formData)
+        await createEmployee(formData);
+        toast.success("Empleado creado correctamente");
       }
-      router.push("/dashboard/employees")
+      router.push("/dashboard/employees");
     } catch (error) {
-      console.error("[v0] Failed to save employee:", error)
-      alert("Error al guardar el empleado")
+      console.error("[v0] Failed to save employee:", error);
+      alert("Error al guardar el empleado");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const selectedCompany = companies.find((c) => c.id === selectedCompanyId)
-  const selectedArea = selectedCompany?.areas.find((a) => a.id === selectedAreaId)
-  const selectedDepartment = selectedArea?.departments.find((d) => d.id === selectedDepartmentId)
+  const selectedCompany = companies.find((c) => c.id === selectedCompanyId);
+  const selectedArea = selectedCompany?.areas.find(
+    (a) => a.id === selectedAreaId,
+  );
+  const selectedDepartment = selectedArea?.departments.find(
+    (d) => d.id === selectedDepartmentId,
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{employeeId ? "Editar Empleado" : "Crear Empleado"}</h2>
+        <h2 className="text-2xl font-bold">
+          {employeeId ? "Editar Empleado" : "Crear Empleado"}
+        </h2>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push("/dashboard/employees")}>
+          <Button
+            variant="outline"
+            onClick={() => router.push("/dashboard/employees")}
+          >
             Cancelar
           </Button>
         </div>
@@ -150,7 +198,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -159,7 +209,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -169,7 +221,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -178,16 +232,20 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="documentType">Tipo de Documento</Label>
                 <Select
                   value={formData.documentType}
-                  onValueChange={(value) => setFormData({ ...formData, documentType: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, documentType: value })
+                  }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -202,7 +260,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="documentNumber"
                   value={formData.documentNumber}
-                  onChange={(e) => setFormData({ ...formData, documentNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, documentNumber: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -210,7 +270,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="cuil"
                   value={formData.cuil}
-                  onChange={(e) => setFormData({ ...formData, cuil: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cuil: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -219,21 +281,40 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                   id="birthDate"
                   type="date"
                   value={formData.birthDate}
-                  onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, birthDate: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="nationality">Nacionalidad</Label>
-                <Input
-                  id="nationality"
+                <Select
                   value={formData.nationality}
-                  onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                />
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, nationality: value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar nacionalidad" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.iso2} value={country.nameES}>
+                        {country.nameES}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="gender">Género</Label>
-                <Select value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })}>
-                  <SelectTrigger>
+                <Select
+                  value={formData.gender}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, gender: value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar género" />
                   </SelectTrigger>
                   <SelectContent>
@@ -247,9 +328,11 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Label htmlFor="civilStatus">Estado Civil</Label>
                 <Select
                   value={formData.civilStatus}
-                  onValueChange={(value) => setFormData({ ...formData, civilStatus: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, civilStatus: value })
+                  }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar estado" />
                   </SelectTrigger>
                   <SelectContent>
@@ -265,7 +348,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
             <div className="flex justify-end gap-2">
               <Button
                 onClick={() => setStep(2)}
-                disabled={!formData.firstName || !formData.lastName || !formData.email}
+                disabled={
+                  !formData.firstName || !formData.lastName || !formData.email
+                }
               >
                 Siguiente
               </Button>
@@ -287,7 +372,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="address"
                   value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -295,7 +382,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="addressNumber"
                   value={formData.addressNumber}
-                  onChange={(e) => setFormData({ ...formData, addressNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, addressNumber: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -303,7 +392,9 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="addressFloor"
                   value={formData.addressFloor}
-                  onChange={(e) => setFormData({ ...formData, addressFloor: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, addressFloor: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -311,7 +402,12 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="addressApartment"
                   value={formData.addressApartment}
-                  onChange={(e) => setFormData({ ...formData, addressApartment: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      addressApartment: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -319,24 +415,58 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Input
                   id="addressPostalCode"
                   value={formData.addressPostalCode}
-                  onChange={(e) => setFormData({ ...formData, addressPostalCode: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      addressPostalCode: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="addressCity">Ciudad</Label>
-                <Input
-                  id="addressCity"
+                <Select
                   value={formData.addressCity}
-                  onChange={(e) => setFormData({ ...formData, addressCity: e.target.value })}
-                />
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, addressCity: value })
+                  }
+                  disabled={!formData.addressProvince}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar ciudad" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departamentosFiltrados.map((dep: any) => (
+                      <SelectItem key={dep.id} value={dep.nombre}>
+                        {dep.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="addressProvince">Provincia</Label>
-                <Input
-                  id="addressProvince"
+                <Select
                   value={formData.addressProvince}
-                  onChange={(e) => setFormData({ ...formData, addressProvince: e.target.value })}
-                />
+                  onValueChange={(value) => {
+                    setFormData({
+                      ...formData,
+                      addressProvince: value,
+                      addressCity: "", // Resetear ciudad al cambiar provincia
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar provincia" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {provincias.map((prov: any) => (
+                      <SelectItem key={prov.id} value={prov.nombre}>
+                        {prov.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -363,18 +493,21 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                 <Select
                   value={selectedCompanyId?.toString()}
                   onValueChange={(value) => {
-                    setSelectedCompanyId(Number(value))
-                    setSelectedAreaId(null)
-                    setSelectedDepartmentId(null)
-                    setFormData({ ...formData, positionId: 0 })
+                    setSelectedCompanyId(Number(value));
+                    setSelectedAreaId(null);
+                    setSelectedDepartmentId(null);
+                    setFormData({ ...formData, positionId: 0 });
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
                     {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id.toString()}>
+                      <SelectItem
+                        key={company.id}
+                        value={company.id.toString()}
+                      >
                         {company.name}
                       </SelectItem>
                     ))}
@@ -388,12 +521,12 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                   <Select
                     value={selectedAreaId?.toString()}
                     onValueChange={(value) => {
-                      setSelectedAreaId(Number(value))
-                      setSelectedDepartmentId(null)
-                      setFormData({ ...formData, positionId: 0 })
+                      setSelectedAreaId(Number(value));
+                      setSelectedDepartmentId(null);
+                      setFormData({ ...formData, positionId: 0 });
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar área" />
                     </SelectTrigger>
                     <SelectContent>
@@ -413,11 +546,11 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                   <Select
                     value={selectedDepartmentId?.toString()}
                     onValueChange={(value) => {
-                      setSelectedDepartmentId(Number(value))
-                      setFormData({ ...formData, positionId: 0 })
+                      setSelectedDepartmentId(Number(value));
+                      setFormData({ ...formData, positionId: 0 });
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar departamento" />
                     </SelectTrigger>
                     <SelectContent>
@@ -436,14 +569,19 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
                   <Label>Puesto *</Label>
                   <Select
                     value={formData.positionId.toString()}
-                    onValueChange={(value) => setFormData({ ...formData, positionId: Number(value) })}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, positionId: Number(value) })
+                    }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Seleccionar puesto" />
                     </SelectTrigger>
                     <SelectContent>
                       {selectedDepartment.positions.map((position) => (
-                        <SelectItem key={position.id} value={position.id.toString()}>
+                        <SelectItem
+                          key={position.id}
+                          value={position.id.toString()}
+                        >
                           {position.name}
                         </SelectItem>
                       ))}
@@ -457,13 +595,20 @@ export function MultiStepEmployeeForm({ employeeId }: MultiStepEmployeeFormProps
               <Button variant="outline" onClick={() => setStep(2)}>
                 Atrás
               </Button>
-              <Button onClick={handleSubmit} disabled={loading || !formData.positionId}>
-                {loading ? "Guardando..." : employeeId ? "Actualizar" : "Crear Empleado"}
+              <Button
+                onClick={handleSubmit}
+                disabled={loading || !formData.positionId}
+              >
+                {loading
+                  ? "Guardando..."
+                  : employeeId
+                    ? "Actualizar"
+                    : "Crear Empleado"}
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }
