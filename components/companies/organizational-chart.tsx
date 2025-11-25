@@ -1,13 +1,17 @@
-import type { Company } from "@/types/organizational-structure"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Users, Building, Briefcase } from "lucide-react"
+import type { Company } from "@/types/organizational-structure";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Users, Building, Briefcase } from "lucide-react";
+import { withEmployeeCounts } from "@/lib/withEmployeeCounts";
 
 interface OrganizationalChartProps {
-  company: Company
+  company: Company;
 }
 
-export default function OrganizationalChart({ company }: OrganizationalChartProps) {
+export default function OrganizationalChart({
+  company,
+}: OrganizationalChartProps) {
+  const companyWithCounts = withEmployeeCounts(company);
   return (
     <div className="space-y-6">
       <Card className="border-2 border-primary/20">
@@ -15,17 +19,23 @@ export default function OrganizationalChart({ company }: OrganizationalChartProp
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building className="h-5 w-5 text-primary" />
-              <CardTitle className="text-xl">{company.name}</CardTitle>
+              <CardTitle className="text-xl">
+                {companyWithCounts.name}
+              </CardTitle>
             </div>
             <Badge variant="secondary" className="text-sm">
               <Users className="mr-1 h-3 w-3" />
-              {company.areas?.reduce((acc, area) => acc + (area.employeeCount || 0), 0) || 0} empleados
+              {companyWithCounts.areas?.reduce(
+                (acc, area) => acc + (area.employeeCount || 0),
+                0,
+              ) || 0}{" "}
+              empleados
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="grid gap-6">
-            {company.areas?.map((area) => (
+            {companyWithCounts.areas?.map((area) => (
               <div
                 key={area.id}
                 className="relative pl-6 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-border"
@@ -61,12 +71,16 @@ export default function OrganizationalChart({ company }: OrganizationalChartProp
                                   <Briefcase className="h-3 w-3" />
                                   <span>{pos.name}</span>
                                 </div>
-                                <span className="text-xs font-medium">{pos.employeeCount || 0}</span>
+                                <span className="text-xs font-medium">
+                                  {pos.employeeCount || 0}
+                                </span>
                               </li>
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-xs text-muted-foreground italic">Sin puestos definidos</p>
+                          <p className="text-xs text-muted-foreground italic">
+                            Sin puestos definidos
+                          </p>
                         )}
                       </div>
                     </Card>
@@ -79,12 +93,15 @@ export default function OrganizationalChart({ company }: OrganizationalChartProp
                 </div>
               </div>
             ))}
-            {(!company.areas || company.areas.length === 0) && (
-              <p className="text-center text-muted-foreground py-8">No hay áreas registradas en esta empresa</p>
+            {(!companyWithCounts.areas ||
+              companyWithCounts.areas.length === 0) && (
+              <p className="text-center text-muted-foreground py-8">
+                No hay áreas registradas en esta empresa
+              </p>
             )}
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

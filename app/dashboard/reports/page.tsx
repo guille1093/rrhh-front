@@ -15,13 +15,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getPendingRequests } from "@/lib/requests-api";
-import eventsData from "./data.json";
-import { EmployeeStatistics } from "./components/employee-statistics";
-import { EmployeesByArea } from "./components/employees-by-area";
-import { ContractTypes } from "./components/contract-types";
-import { ContractHistory } from "./components/contract-history";
-import { PendingRequests } from "./components/pending-requests";
-import { UpcomingEvents } from "./components/upcoming-events";
+import eventsData from "../data.json";
+import { EmployeeStatistics } from "../components/employee-statistics";
+import { EmployeesByArea } from "../components/employees-by-area";
+import { ContractTypes } from "../components/contract-types";
+import { ContractHistory } from "../components/contract-history";
+import { PendingRequests } from "../components/pending-requests";
+import { UpcomingEvents } from "../components/upcoming-events";
 
 import { CompaniesAPI } from "@/lib/companies-api";
 
@@ -99,6 +99,30 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Selector de Empresa */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Filtro de Empresa</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Select
+            value={selectedCompanyId?.toString() || ""}
+            onValueChange={(val) => setSelectedCompanyId(Number(val))}
+          >
+            <SelectTrigger className="w-full md:w-64">
+              <SelectValue placeholder="Seleccionar empresa" />
+            </SelectTrigger>
+            <SelectContent>
+              {companies.map((c) => (
+                <SelectItem key={c.id} value={c.id.toString()}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
       {loadingReport && (
         <Card>
           <CardContent className="pt-6">
@@ -116,11 +140,16 @@ export default function DashboardPage() {
 
       {report && !loadingReport && (
         <>
-          <div className="grid gap-4 md:grid-cols-2 mb-6">
-            <PendingRequests requests={pendingRequests} />
+          <EmployeeStatistics
+            totalEmployees={report.totalEmployees}
+            activeEmployees={report.activeEmployees}
+          />
 
-            <UpcomingEvents events={eventsData} />
-          </div>
+          <EmployeesByArea data={report.byAreaDeptPosition} />
+
+          <ContractTypes data={report.byContractType} />
+
+          <ContractHistory data={report.contractsHistory} />
         </>
       )}
     </div>
